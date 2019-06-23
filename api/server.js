@@ -4,17 +4,18 @@ const port = process.env.PORT || 3000;
 const app = express();
 const cors = require("cors");
 const Twit = require("twit");
-const config = require("./../src/config");
+
+require('dotenv').config();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
 
 const twit = new Twit({
-    consumer_key: config.twitterConsumerKey,
-    consumer_secret: config.twitterConsumerSecret,
-    access_token: config.twitterAccessToken,
-    access_token_secret: config.twitterAccessSecret,
+    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    access_token: process.env.TWITTER_ACCESS_TOKEN,
+    access_token_secret: process.env.TWITTER_ACCESS_SECRET,
     timeout_ms: 60 * 1000,
     strictSSL: true
 });
