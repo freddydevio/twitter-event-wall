@@ -4,12 +4,14 @@ const port = process.env.PORT || 3000;
 const app = express();
 const cors = require("cors");
 const Twit = require("twit");
+const serveStatic = require('serve-static');
 
 require('dotenv').config();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cors());
+app.use(serveStatic(__dirname + "/../dist"));
 
 const twit = new Twit({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -53,4 +55,6 @@ app.use("/api/search", (req, res, next) => {
         .catch(error => res.json(error));
 });
 
-app.listen(port, () => console.log(`running on port ${port}`));
+app.listen(port, () => {
+    console.log('Listening on port ' + port)
+});
