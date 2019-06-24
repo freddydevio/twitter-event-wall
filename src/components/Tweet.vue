@@ -2,46 +2,46 @@
     <div class="twitter-widget">
         <div class="headline">
             <div class="author">
-                <span class="author-name">{{post.user.name}}</span>
-                <span class="author-screen-name">@{{ post.user.screen_name }}</span>
+                <span class="author-name">{{tweet.user.name}}</span>
+                <span class="author-screen-name">@{{ tweet.user.screen_name }}</span>
             </div>
             <span class="createdAt">{{ twitterTime }}</span>
         </div>
-        <div class="hashtags">
-            <span class="hashtag" v-for="hashtag in post.entities.hashtags">#{{hashtag.text}}</span>
+        <span class="text">{{ tweet.full_text }}</span>
+        <div class="media" v-if="tweet.extended_entities">
+            <div class="media-item" v-for="(mediaItem, i) in tweet.extended_entities.media">
+                <TweetMediaTypeImage v-if="mediaItem.type === 'photo'" :image-path="mediaItem.media_url_https" :sizes="mediaItem.sizes"/>
+                <TweetMediaTypeAnimatedGif v-if="mediaItem.type === 'animated_gif'" :video-path="mediaItem.video_info.variants[0].url" :sizes="mediaItem.sizes"/>
+            </div>
         </div>
-        <span class="text">{{ post.full_text }}</span>
-        <div class="image-container" v-if="imageExist">
-            <div class="image" :style="'background-image: url(' + getPostedImageUrl + ')'"></div>
+        <div class="hashtags">
+            <span class="hashtag" v-for="hashtag in tweet.entities.hashtags">#{{hashtag.text}}</span>
         </div>
         <div class="actions">
-            <span class="favorite"><i class="fa fa-heart-o" aria-hidden="true"></i>{{ post.favorite_count }}</span>
-            <span class="retweeted"><i class="fa fa-retweet" aria-hidden="true"></i>{{ post.retweet_count }}</span>
+            <span class="favorite"><i class="fa fa-heart-o" aria-hidden="true"></i>{{ tweet.favorite_count }}</span>
+            <span class="retweeted"><i class="fa fa-retweet" aria-hidden="true"></i>{{ tweet.retweet_count }}</span>
         </div>
     </div>
 </template>
 
 <script>
     import moment from 'moment';
+    import TweetMediaTypeImage from "./tweet/mediaType/Image";
+    import TweetMediaTypeAnimatedGif from "./tweet/mediaType/AnimatedGif";
 
     export default {
-        name: "TwitterWidget",
+        name: "Tweet",
+        components: {TweetMediaTypeAnimatedGif, TweetMediaTypeImage},
         mounted() {
         },
         computed: {
             twitterTime() {
-                return moment(this.post.created_at).format('DD. MMMM YYYY');
+                return moment(this.tweet.created_at).format('DD. MMMM YYYY');
             },
-            imageExist() {
-                return this.post.extended_entities && this.post.extended_entities.media;
-            },
-            getPostedImageUrl() {
-                if (this.post.extended_entities) {
-                    return this.post.extended_entities.media.shift().media_url_https;
-                }
-            }
         },
-        props: ['post']
+        props: {
+            'tweet': {type: Object}
+        }
     };
 </script>
 
@@ -80,15 +80,10 @@
                 margin: .25rem .5rem .25rem 0;
             }
         }
-        .image-container {
-            margin: 1rem 0;
-            overflow: hidden;
-            border-radius: 1rem;
-            .image {
-                width: 100%;
-                height: 16rem;
-                background-size: cover;
-                background-position: center center;
+        .media {
+            margin: .25rem 0;
+            .media-item {
+                margin: .5rem 0;
             }
         }
         .actions {

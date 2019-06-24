@@ -2,21 +2,24 @@
     <div class="twitter-page">
         <span class="loading" v-if="loading">loading...</span>
         <stack :column-min-width="450" :gutter-width="4" :gutter-height="8" v-if="!loading">
-            <stack-item style="transition: transform 300ms" v-for="(post, i) in twitterPosts" :key="i">
-                <TwitterWidget :post="post"/>
+            <stack-item style="transition: transform 300ms" v-for="(tweet, i) in twitterPosts" :key="i">
+                <Tweet :tweet="tweet"/>
             </stack-item>
         </stack>
+        <ScrollAnimation v-if="animationEnabled"
+                        :timeout="animationTimeout"/>
     </div>
 </template>
 
 <script>
     import {Stack, StackItem} from 'vue-stack-grid';
     import axios from "axios";
-    import TwitterWidget from "./TwitterWidget";
+    import Tweet from "./Tweet";
+    import ScrollAnimation from "./ScrollAnimation";
 
     export default {
         name: "TwitterWall",
-        components: {TwitterWidget, Stack, StackItem},
+        components: {ScrollAnimation, Tweet, Stack, StackItem},
         mounted() {
             switch (process.env.VUE_APP_TWITTER_WALL_METHOD) {
                 case 'search':
@@ -32,7 +35,9 @@
             return {
                 loading: true,
                 twit: null,
-                twitterPosts: null
+                twitterPosts: null,
+                animationEnabled: process.env.VUE_APP_SHOW_SCROLL_ANIMATION,
+                animationTimeout: process.env.VUE_APP_SCROLL_ANIMATION_TIMEOUT
             };
         },
         methods: {

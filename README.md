@@ -43,9 +43,7 @@ npm run build
 ```
 
 ## ToDos
-- Add up & down scrolling if more content as displayed is available
 - Error messages
 - Add Auto update (maybe Twitter API Streams would be better!)
-- Add Demo
 - Add more features :)
 - New Favicon :)
